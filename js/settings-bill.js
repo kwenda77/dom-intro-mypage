@@ -15,7 +15,7 @@ const criticalLevelSet = document.querySelector('.criticalLevelSetting');
 const radioAddButton = document.querySelector('.radioAdd');
 
 //get a reference to the 'Update settings' button
-const updateSettings = document.querySelector('.updateSettings');
+const updateSettingsBtn = document.querySelector('.updateSettings');
 
 // create a variables that will keep track of all the settings
 
@@ -25,43 +25,36 @@ var smsTotal = 0;
 var totalCost = 0;
 
 //add an event listener for when the 'Update settings' button is pressed
+var callCostSetting = 2.55;
+var smsCostSetting = 0.65;
+var warningLevelSetting = 30;
+var criticalLevel = 50;
 
-updateSettings.addEventListener('click', function(){
+var callsTotal = 0;
+var smsTotal = 0;
 
-   
-    var callCostSetting = callCostSet.value;
-    if(parseInt(callCostSetting)<= 29.99)
-    {
-        callsTotal += parseInt(callCostSetting);
-    }
+function updateSettings() {
 
-    var smsCostSetting = smsCostSet.value;
-    if(parseInt(smsCostSetting)<= 29.99)
-    {
-        smsTotal += parseInt(smsCostSetting);
-    }
-    
-    var warningLevelSetting = warningLevelSet.value;
-    if(parseInt(smsCostSetting)>= 30 || parseInt(smsCostSetting)<=49.99)
-            {
-        totalCost += parseInt(warningLevelSetting);
-       
-       }
-
-
-    
-    var criticalLevelSetting = criticalLevelSet.value;;
-    if(parseInt(smsCostSetting)>= 50)
-    {
-        totalCost += parseInt(criticalLevelSetting);
+    if (callCostSet.value != "") {
+        callCostSetting = Number(callCostSet.value);
     } 
- 
-});
+    if (smsCostSet.value != "") {
+        smsCostSetting = Number(smsCostSet.value);
+    }
+    if (warningLevelSet.value != "") {
+        warningLevelSetting = Number(warningLevelSet.value);
+    }
+    if (criticalLevelSet.value != "") {
+        criticalLevel = Number(criticalLevelSet.value);
+    }
+
+}
 
 
-//add an event listener for when the add button is pressed
 
-radioAddButton.addEventListener('click', function(){
+
+//add an event listener for when the add button is presse
+function billSettings(){
          
 
     var billItemTypeWithSettings = document.querySelector("input[name='billItemTypeWithSettings']:checked");
@@ -69,10 +62,10 @@ radioAddButton.addEventListener('click', function(){
     // billItemType will be 'call' or 'sms'
   
     if (billItemType === "call"){
-        callsTotal += 2.75
+        callsTotal += callCostSetting
     }
     else if (billItemType === "sms"){
-        smsTotal += 0.75;
+        smsTotal += smsCostSetting;
     }
     
     //update the totals that is displayed on the screen.
@@ -81,16 +74,17 @@ radioAddButton.addEventListener('click', function(){
     totalCost = callsTotal + smsTotal;
     totalSettings.innerHTML = totalCost.toFixed(2);
     
-    
-    if (totalCost >= 50){
+    totalSettings.classList.remove("warning", "danger");
+
+    if (totalCost >= warningLevelSetting && totalCost < criticalLevel){
         // adding the danger class will make the text red
-        totalSettings.classList.add("danger");
-    }
-    else if (totalCost >= 30){
         totalSettings.classList.add("warning");
     }
+    else if (totalCost >= criticalLevel){
+        totalSettings.classList.add("danger");
+    }
 
-});
+}
 
 //in the event listener get the value from the billItemTypeRadio radio buttons
 // * add the appropriate value to the call / sms total
@@ -98,6 +92,11 @@ radioAddButton.addEventListener('click', function(){
 // * add nothing for invalid values that is not 'call' or 'sms'.
 // * display the latest total on the screen.
 // * check the value thresholds and display the total value in the right color.
+updateSettingsBtn.addEventListener("click", updateSettings)
+radioAddButton.addEventListener("click", billSettings)
+
+
+
 
 
 
